@@ -1,5 +1,7 @@
 #include<xc.h>           // processor SFR definitions
 #include<sys/attribs.h>  // __ISR macro
+#include "spi.h"
+#include "dac.h"
 
 // DEVCFG0
 #pragma config DEBUG = OFF // disable debugging
@@ -32,11 +34,11 @@
 #pragma config PMDL1WAY = OFF // allow multiple reconfigurations
 #pragma config IOL1WAY = OFF // allow multiple reconfigurations
 
-// Delay for 0.5 seconds
+// Delay for 1 seconds    #TODO: Abstract this to delay for any number of seconds
 void delay(void) {
     _CP0_SET_COUNT(0);
-    while (_CP0_GET_COUNT() < 12000000) {
-        // Do nothing for 0.5 seconds
+    while (_CP0_GET_COUNT() < 240000) {     // idk why its 177k lmfao
+        // Do nothing for 10ms (100Hz)
     }
 }
 
@@ -58,25 +60,54 @@ int main() {
 
     // do your TRIS and LAT commands here
     TRISBbits.TRISB4 = 1;       // Set B4 as input
-    
     TRISAbits.TRISA4 = 0;       // Set A4 as output
     LATAbits.LATA4 = 0;         // Initially off
     
+    // Homework 2 SPI
+    initSPI();
     
     __builtin_enable_interrupts();
+   
+    // Create 2 arrays to represent 1 period of each wave (recall 12-bit resolution => 4096)
+    unsigned short triangle[100];
+    unsigned short sine[50];
+    int i = 0;        // index for triangle wave @ 1Hz
+    int j = 0;        // index for sine wave @ 2Hz
+
+    // Populate triangle wave
+    int ii;
+    for (ii = 0; ii < 100; ii++) {
+        if (ii < 50) {     // up
+            triangle[ii] = (unsigned short)(4096/50 * ii);
+        } else {           // down
+            triangle[ii] = triangle[99-ii];     // Just go in reverse
+        }
+    }
+
+    // Populate sine wave
+    int jj;
+    for (jj = 0; jj < 50; jj++) {
+        sine[jj] = get_sine(jj);
+    }
+
 
     while (1) {
-        // use _CP0_SET_COUNT(0) and _CP0_GET_COUNT() to test the PIC timing
-        // remember the core timer runs at half the sysclk
-        //If B4 pushed (two 1-second square waves)
-        if (PORTBbits.RB4 == 0) {       // NOTE: Pull-up resistor so pushed <= Low
-            LATAbits.LATA4 = 1;     // Set high
-            delay();
-            LATAbits.LATA4 = 0;     // Set low
-            delay();            
-            LATAbits.LATA4 = 1;     // Set high
-            delay();
-            LATAbits.LATA4 = 0;     // Set low            
-        } 
+        // Write the bytes to the DAC
+        dac_write('a', triangle[i]);
+        dac_write('b', sine[j]);
+
+        i++;
+        j++;
+        // Reset indexing for triangle wave to start of period
+        if (i == 100) {
+            i = 0;
+        }
+        // Reset indexing for sine wave to start of period
+        if (j == 50) {
+            j = 0;
+        }
+
+        //DELAY => remember this runs at half the sysclock, so 24MHz
+        delay();        // This is how fast the DAC updates(?) => Delay for 10ms
     }
 }
