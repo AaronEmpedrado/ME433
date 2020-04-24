@@ -49,15 +49,19 @@ void delay(void) {
 // Blink A4 every half second
 void heartbeat(void) {
     LATAbits.LATA4 = 1;         // High
+    /*
     // blink a pixel
     ssd1306_drawPixel(64,16,1);
     ssd1306_update();
+    */
     _CP0_SET_COUNT(0);
     while (_CP0_GET_COUNT() < 48000000 / 2 / 2) {
     }
     LATAbits.LATA4 = 0;         // Low
+    /*
     ssd1306_drawPixel(64,16,0);
     ssd1306_update();
+    */
     _CP0_SET_COUNT(0);
     while (_CP0_GET_COUNT() < 48000000 / 2 / 2) {
     }    
@@ -101,6 +105,14 @@ int main() {
         } else {
             setPinA(MCP_ADDRESS,7);     // turn on the yellow led
         }
+        drawChar(50,16,'p');
+        drawChar(55,16,'e');
+        drawChar(60,16,'n');
+        drawChar(65,16,'i');
+        drawChar(70,16,'s');
+        ssd1306_clear();
+        ssd1306_update();
+        
         heartbeat();
     }
 }
