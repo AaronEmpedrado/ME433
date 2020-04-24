@@ -4,6 +4,8 @@
 //#include "dac.h"
 #include "i2c_master_noint.h"
 #include "mcp23017.h"
+#include "font.h"
+#include "ssd1306.h"
 
 // DEVCFG0
 #pragma config DEBUG = OFF // disable debugging
@@ -44,15 +46,20 @@ void delay(void) {
     }
 }
 
-// Blink A4 for 100ms
+// Blink A4 every half second
 void heartbeat(void) {
     LATAbits.LATA4 = 1;         // High
+    // blink a pixel
+    ssd1306_drawPixel(64,16,1);
+    ssd1306_update();
     _CP0_SET_COUNT(0);
-    while (_CP0_GET_COUNT() < 48000000 / 2 / 10) {
+    while (_CP0_GET_COUNT() < 48000000 / 2 / 2) {
     }
     LATAbits.LATA4 = 0;         // Low
+    ssd1306_drawPixel(64,16,0);
+    ssd1306_update();
     _CP0_SET_COUNT(0);
-    while (_CP0_GET_COUNT() < 48000000 / 2 / 10) {
+    while (_CP0_GET_COUNT() < 48000000 / 2 / 2) {
     }    
 }
 
@@ -79,6 +86,9 @@ int main() {
     // Enable I2C1 (HW3)
     i2c_master_setup();     // enable i2c
     mcp_init();             // init mcp with B as inputs and A as outputs
+    
+    // Setup the LCD (HW4)
+    ssd1306_setup();
     
     __builtin_enable_interrupts();
    
