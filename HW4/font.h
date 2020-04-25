@@ -5,6 +5,12 @@
 void drawChar(unsigned char x, unsigned char y, char c);
 void drawString(unsigned char x, unsigned char y, char *message);
 
+// Some macros for convenient coordinate values
+#define ROW_1   8
+#define ROW_2   16
+#define ROW_3   24
+#define ROW_4   31
+
 // lookup table for all of the ascii characters
 static const char ASCII[96][5] = {
  {0x00, 0x00, 0x00, 0x00, 0x00} // 20  (space)

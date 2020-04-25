@@ -98,9 +98,12 @@ int main() {
     __builtin_enable_interrupts();
   
     char message[100];
-    sprintf(message, "Hello I would just like to see how far this will end up going.");
 
     while (1) {
+        _CP0_SET_COUNT(0);
+        ssd1306_update();
+        sprintf(message, "FPS: %d", (int)(24000000 / _CP0_GET_COUNT()));
+        drawString(0,ROW_3,message);
         // Read pin B
         unsigned char bVals = readPinB(MCP_ADDRESS);
         // B0 is pull-up
@@ -109,9 +112,6 @@ int main() {
         } else {
             setPinA(MCP_ADDRESS,7);     // turn on the yellow led
         }
-        drawString(0,10,message);
-        ssd1306_clear();
-        ssd1306_update();
         
         heartbeat();
     }

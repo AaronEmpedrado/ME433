@@ -1,6 +1,5 @@
 #include "mcp23017.h"
 
-//TODO: write macros for address with write and read set
 // Initialize the MCP23017
 // Use default IOCON.BANK value of 0 (interleaved)
 void mcp_init(void) {
