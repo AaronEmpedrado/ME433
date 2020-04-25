@@ -6,6 +6,7 @@
 #include "mcp23017.h"
 #include "font.h"
 #include "ssd1306.h"
+#include <stdio.h>      // sprintf
 
 // DEVCFG0
 #pragma config DEBUG = OFF // disable debugging
@@ -95,7 +96,10 @@ int main() {
     ssd1306_setup();
     
     __builtin_enable_interrupts();
-   
+  
+    char message[100];
+    sprintf(message, "Hello I would just like to see how far this will end up going.");
+
     while (1) {
         // Read pin B
         unsigned char bVals = readPinB(MCP_ADDRESS);
@@ -105,11 +109,7 @@ int main() {
         } else {
             setPinA(MCP_ADDRESS,7);     // turn on the yellow led
         }
-        drawChar(50,16,'p');
-        drawChar(55,16,'e');
-        drawChar(60,16,'n');
-        drawChar(65,16,'i');
-        drawChar(70,16,'s');
+        drawString(0,10,message);
         ssd1306_clear();
         ssd1306_update();
         
