@@ -14,9 +14,9 @@ void ws2812b_setup() {
     TMR2 = 0; // initialize Timer2 to 0
     T2CONbits.ON = 1; // turn on Timer2
 
-    // initialize output pin as off
-    // TRIS...
-    // LAT...
+    // initialize output pin as off => Chose B6 because it is closest Digital pin to the LEDs
+    TRISBbits.TRISB6 = 0;   // Set B6 as output
+    LATBbits.LATB6 = 0;     // Initially off
 }
 
 // build an array of high/low times from the color input array, then output the high/low bits
