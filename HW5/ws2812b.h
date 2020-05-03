@@ -12,6 +12,7 @@ typedef struct {
 
 void ws2812b_setup();
 void ws2812b_setColor(wsColor*,int);
+void ws2812b_initColor(wsColor*, int, unsigned char, unsigned char, unsigned char); //Init specific LED in array to values
 wsColor HSBtoRGB(float hue, float sat, float brightness);
 
 #endif

@@ -3,9 +3,10 @@
 //#include "spi.h"
 //#include "dac.h"
 #include "i2c_master_noint.h"
-#include "mcp23017.h"
-#include "font.h"
-#include "ssd1306.h"
+#include "mcp23017.h"   // Expander
+#include "font.h"       // LCD
+#include "ssd1306.h"    // LCD
+#include "ws2812b.h"    // LEDs (Neo)
 #include <stdio.h>      // sprintf
 
 // DEVCFG0
@@ -94,24 +95,32 @@ int main() {
     
     // Setup the LCD (HW4)
     ssd1306_setup();
+
+    // Setup the Neos (HW5)
+    ws2812b_setup();
     
     __builtin_enable_interrupts();
   
-    char message[100];
-    char msg[100];
-    unsigned char x = 0;
-    sprintf(msg, "hi");
+    char message[100];              // HW4 message for LCD
+
+    struct wsColor wsColors[4];     // HW5 => create an array of 4 wsColors (can change if you add or remove LEDs) 
+    ws2812b_initColor(wsColors, 0, (unsigned char)0xff, (unsigned char) 0x00, (unsigned char)0x00);
+    ws2812b_initColor(wsColors, 1, (unsigned char)0xff, (unsigned char) 0xff, (unsigned char)0x00);
+    ws2812b_initColor(wsColors, 2, (unsigned char)0x00, (unsigned char) 0xff, (unsigned char)0x80);
+    ws2812b_initColor(wsColors, 3, (unsigned char)0x99, (unsigned char) 0xff, (unsigned char)0xff);
+    ws2812b_setColor(wsColors, 4);
+
 
     while (1) {
         _CP0_SET_COUNT(0);
         ssd1306_update();
         sprintf(message, "FPS: %d", (int)(24000000 / _CP0_GET_COUNT()));
         drawString(0,ROW_3,message);
-        drawString(x, ROW_1, msg);
-        x += 10;
-        if (x > 128) {
-            x = 0;
-        }
+        ssd1306_update();
+        // Leave above alone
+
+        // NeoLEDs
+
 
         // Read pin B
         unsigned char bVals = readPinB(MCP_ADDRESS);
@@ -121,7 +130,8 @@ int main() {
         } else {
             setPinA(MCP_ADDRESS,7);     // turn on the yellow led
         }
-        
+       
+        // Leave below alone 
         heartbeat();
         ssd1306_clear();
         ssd1306_update();
