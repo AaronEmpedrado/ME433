@@ -116,16 +116,33 @@ int main() {
     // Some vars that help with making the Neos go ~rAinbOW~
     int i = 0;      // index for the changing the rainbow array
     int j;
-    float hue;
+//    float hue;
+
+    // TODO: Trying to make the array of wsColors before the while loop so i dont lag while creating the colors
+    wsColor rainbow[360];
+    for(j=0; j<360; j++){
+        rainbow[j] = HSBtoRGB((float)j, (float)1, (float)0.5);
+    }
+
     while (1) {
+        // FPS is determined by setting count to 0 and then sprinting after whatever action
         _CP0_SET_COUNT(0);
         ssd1306_update();
         sprintf(message, "FPS: %d", (int)(24000000 / _CP0_GET_COUNT()));
         drawString(0,ROW_3,message);
         ssd1306_update();
-        // Leave above alone
 
         // NeoLEDs => generate a changing array rainbow of colors
+        for (j=0; j<LEDS; j++) {
+            wsColors[j] = rainbow[(i*20*LEDS + j*20) % 360];    // can change the 20 to any increment
+        }
+        ws2812b_setColor(wsColors, LEDS);
+
+        i = i+1;
+
+
+        /*
+        //OLD which was slow because i had to create the wscolor every time so just pre-did it
         // Update each LED, incrementing hue by 1 each time
         for (j=0; j<LEDS; j++) {
             hue = (float)((i+j*20) % 360);
@@ -133,7 +150,7 @@ int main() {
         }
         ws2812b_setColor(wsColors, LEDS);
         i = (i+LEDS) % 360;     // Wrap around all possible colors in color wheel
-
+        */
 
         // Read pin B
         unsigned char bVals = readPinB(MCP_ADDRESS);
