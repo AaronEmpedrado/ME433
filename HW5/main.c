@@ -103,14 +103,20 @@ int main() {
   
     char message[100];              // HW4 message for LCD
 
-    wsColor wsColors[4];     // HW5 => create an array of 4 wsColors (can change if you add or remove LEDs) 
+    wsColor wsColors[LEDS];     // HW5 => create an array of 4 wsColors (can change if you add or remove LEDs) 
+    /*
+    // A static arrangement of 4 colors
     ws2812b_initColor(wsColors, 0, (unsigned char)0xff, (unsigned char) 0x00, (unsigned char)0x00);
     ws2812b_initColor(wsColors, 1, (unsigned char)0xff, (unsigned char) 0xff, (unsigned char)0x00);
     ws2812b_initColor(wsColors, 2, (unsigned char)0x00, (unsigned char) 0xff, (unsigned char)0x80);
     ws2812b_initColor(wsColors, 3, (unsigned char)0x99, (unsigned char) 0xff, (unsigned char)0xff);
     ws2812b_setColor(wsColors, 4);
+    */
 
-
+    // Some vars that help with making the Neos go ~rAinbOW~
+    int i = 0;      // index for the changing the rainbow array
+    int j;
+    float hue;
     while (1) {
         _CP0_SET_COUNT(0);
         ssd1306_update();
@@ -119,8 +125,15 @@ int main() {
         ssd1306_update();
         // Leave above alone
 
-        // NeoLEDs
-//        ws2812b_setColor(wsColors, 1); 
+        // NeoLEDs => generate a changing array rainbow of colors
+        // Update each LED, incrementing hue by 1 each time
+        for (j=0; j<LEDS; j++) {
+            hue = (float)((i+j*20) % 360);
+            wsColors[j] = HSBtoRGB(hue, (float)1, (float)0.5);
+        }
+        ws2812b_setColor(wsColors, LEDS);
+        i = (i+LEDS) % 360;     // Wrap around all possible colors in color wheel
+
 
         // Read pin B
         unsigned char bVals = readPinB(MCP_ADDRESS);

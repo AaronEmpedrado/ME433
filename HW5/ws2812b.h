@@ -2,6 +2,7 @@
 #define WS2812B_H__
 
 #include<xc.h> // processor SFR definitions
+#define LEDS 4  // Macro so you dont have to change it every time
 
 // link three 8bit colors together
 typedef struct {
