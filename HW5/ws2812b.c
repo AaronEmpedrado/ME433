@@ -4,8 +4,11 @@
 // other includes if necessary for debugging
 
 // Timer2 delay times, you can tune these if necessary
-#define LOWTIME 15*10 // number of 48MHz cycles to be low for 0.35uS
-#define HIGHTIME 65*10 // number of 48MHz cycles to be high for 1.65uS
+#define LOWTIME 15 // number of 48MHz cycles to be low for 0.35uS
+#define HIGHTIME 65 // number of 48MHz cycles to be high for 1.65uS
+//NOTE: If you're going to change this to *10 to check on nScope, 
+//      Only check output for 1 LED cause timer count doesn't go too high
+//      and continuously set in while loop
 
 // setup Timer2 for 48MHz, and setup the output pin
 void ws2812b_setup() {
@@ -40,7 +43,7 @@ void ws2812b_setColor(wsColor * c, int numLEDs) {
         // loop through each color bit, MSB first
         for (j = 7; j >= 0; j--) {  // RED
             // if the bit is a 1
-            if ((c[i].r >> j) & 0x01) {     // remember MSb
+            if (((c[i].r >> j) & 0x01) == 0x01) {     // remember MSb
                 // the high is longer
                 delay_times[nB] = delay_times[nB - 1] + HIGHTIME;
                 nB++;
@@ -59,7 +62,7 @@ void ws2812b_setColor(wsColor * c, int numLEDs) {
         
         for (j = 7; j >= 0; j--) {  // GREEN
             // if the bit is a 1
-            if ((c[i].g >> j) & 0x01) {     // remember MSb
+            if (((c[i].g >> j) & 0x01) == 0x01) {     // remember MSb
                 // the high is longer
                 delay_times[nB] = delay_times[nB - 1] + HIGHTIME;
                 nB++;
@@ -78,7 +81,7 @@ void ws2812b_setColor(wsColor * c, int numLEDs) {
 
         for (j = 7; j >= 0; j--) {  // BLUE
             // if the bit is a 1
-            if ((c[i].b >> j) & 0x01) {     // remember MSb
+            if (((c[i].b >> j) & 0x01) == 0x01) {     // remember MSb
                 // the high is longer
                 delay_times[nB] = delay_times[nB - 1] + HIGHTIME;
                 nB++;

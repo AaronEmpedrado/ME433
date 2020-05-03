@@ -103,7 +103,7 @@ int main() {
   
     char message[100];              // HW4 message for LCD
 
-    struct wsColor wsColors[4];     // HW5 => create an array of 4 wsColors (can change if you add or remove LEDs) 
+    wsColor wsColors[4];     // HW5 => create an array of 4 wsColors (can change if you add or remove LEDs) 
     ws2812b_initColor(wsColors, 0, (unsigned char)0xff, (unsigned char) 0x00, (unsigned char)0x00);
     ws2812b_initColor(wsColors, 1, (unsigned char)0xff, (unsigned char) 0xff, (unsigned char)0x00);
     ws2812b_initColor(wsColors, 2, (unsigned char)0x00, (unsigned char) 0xff, (unsigned char)0x80);
@@ -120,7 +120,7 @@ int main() {
         // Leave above alone
 
         // NeoLEDs
-
+//        ws2812b_setColor(wsColors, 1); 
 
         // Read pin B
         unsigned char bVals = readPinB(MCP_ADDRESS);
